@@ -171,20 +171,14 @@ export default function Hero() {
         </div>
 
         {/* Headline */}
-        <h1 className="md:col-start-1 md:row-start-2 font-display font-medium leading-[0.95] tracking-tightest text-balance text-center md:text-left">
-          <span className="block overflow-hidden">
-            <span
-              ref={titleLine1}
-              className="block text-[11vw] sm:text-[10vw] md:text-[5.2vw] lg:text-[78px]"
-            >
+        <h1 className="md:col-start-1 md:row-start-2 font-display font-medium tracking-tightest text-balance text-center md:text-left">
+          <span className="block overflow-hidden pb-[0.15em] text-[11vw] sm:text-[10vw] md:text-[5.2vw] lg:text-[78px] leading-[1.15]">
+            <span ref={titleLine1} className="block">
               Building elegant
             </span>
           </span>
-          <span className="block overflow-hidden">
-            <span
-              ref={titleLine2}
-              className="block text-[11vw] sm:text-[10vw] md:text-[5.2vw] lg:text-[78px]"
-            >
+          <span className="block overflow-hidden pb-[0.2em] text-[11vw] sm:text-[10vw] md:text-[5.2vw] lg:text-[78px] leading-[1.15]">
+            <span ref={titleLine2} className="block">
               mobile <span className="text-signal italic">experiences</span>
             </span>
           </span>

@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { createPortal } from "react-dom";
 
 const links = [
@@ -8,10 +10,13 @@ const links = [
   { label: "About", href: "#about" },
   { label: "Skills", href: "#skills" },
   { label: "Experience", href: "#experience" },
+  { label: "Blog", href: "#blog" },
   { label: "Contact", href: "#contact" },
 ];
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -40,8 +45,15 @@ export default function Navbar() {
     };
   }, [open]);
 
+  const resolveHref = (href: string) => (isHome ? href : `/${href}`);
+
   const scrollToSection = (href: string) => {
-    const target = document.querySelector(href);
+    const hash = href.startsWith("#") ? href : `#${href}`;
+    if (!isHome) {
+      window.location.href = `/${hash}`;
+      return;
+    }
+    const target = document.querySelector(hash);
     if (!target) return;
     const lenis = (window as any).__lenis;
     if (lenis) {
@@ -51,7 +63,10 @@ export default function Navbar() {
     }
   };
 
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleHashClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string
+  ) => {
     e.preventDefault();
     const closingMenu = open;
     setOpen(false);
@@ -65,6 +80,9 @@ export default function Navbar() {
       scrollToSection(href);
     }
   };
+
+  const navLinkClass =
+    "font-body text-[13px] tracking-wide text-ink/70 hover:text-ink transition-colors duration-300 relative group";
 
   const mobileMenu = (
     <div
@@ -94,8 +112,9 @@ export default function Navbar() {
               }}
             >
               <a
-                href={link.href}
-                onClick={(e) => handleClick(e, link.href)}
+                href={resolveHref(link.href)}
+                onClick={(e) => handleHashClick(e, link.href)}
+                data-cursor-hover
                 className="font-display text-3xl tracking-tight block"
               >
                 {link.label}
@@ -115,23 +134,33 @@ export default function Navbar() {
         } ${scrolled || open ? "py-4 bg-paper/80 backdrop-blur-md border-b border-ink/[0.06]" : "py-6"}`}
       >
         <nav className="relative z-[110] max-w-[1400px] mx-auto px-6 md:px-10 flex items-center justify-between">
-          <a
-            href="#hero"
-            onClick={(e) => handleClick(e, "#hero")}
-            data-cursor-hover
-            className="font-display text-sm tracking-[0.15em] uppercase"
-          >
-            TH<span className="text-signal">.</span>
-          </a>
+          {isHome ? (
+            <a
+              href="#hero"
+              onClick={(e) => handleHashClick(e, "#hero")}
+              data-cursor-hover
+              className="font-display text-sm tracking-[0.15em] uppercase"
+            >
+              TH<span className="text-signal">.</span>
+            </a>
+          ) : (
+            <Link
+              href="/"
+              data-cursor-hover
+              className="font-display text-sm tracking-[0.15em] uppercase"
+            >
+              TH<span className="text-signal">.</span>
+            </Link>
+          )}
 
           <ul className="hidden md:flex items-center gap-10">
             {links.map((link) => (
               <li key={link.href}>
                 <a
-                  href={link.href}
-                  onClick={(e) => handleClick(e, link.href)}
+                  href={resolveHref(link.href)}
+                  onClick={(e) => handleHashClick(e, link.href)}
                   data-cursor-hover
-                  className="font-body text-[13px] tracking-wide text-ink/70 hover:text-ink transition-colors duration-300 relative group"
+                  className={navLinkClass}
                 >
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-signal transition-all duration-300 group-hover:w-full" />
@@ -140,14 +169,24 @@ export default function Navbar() {
             ))}
           </ul>
 
-          <a
-            href="#contact"
-            onClick={(e) => handleClick(e, "#contact")}
-            data-cursor-hover
-            className="hidden md:inline-flex items-center gap-2 text-[13px] font-medium border border-ink/15 px-5 py-2.5 rounded-full hover:border-signal hover:text-signal transition-all duration-300"
-          >
-            Let&rsquo;s talk
-          </a>
+          {isHome ? (
+            <a
+              href="#contact"
+              onClick={(e) => handleHashClick(e, "#contact")}
+              data-cursor-hover
+              className="hidden md:inline-flex items-center gap-2 text-[13px] font-medium border border-ink/15 px-5 py-2.5 rounded-full hover:border-signal hover:text-signal transition-all duration-300"
+            >
+              Let&rsquo;s talk
+            </a>
+          ) : (
+            <Link
+              href="/#contact"
+              data-cursor-hover
+              className="hidden md:inline-flex items-center gap-2 text-[13px] font-medium border border-ink/15 px-5 py-2.5 rounded-full hover:border-signal hover:text-signal transition-all duration-300"
+            >
+              Let&rsquo;s talk
+            </Link>
+          )}
 
           <button
             type="button"
