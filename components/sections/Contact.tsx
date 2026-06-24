@@ -140,7 +140,7 @@ export default function Contact() {
             <MagneticLink href="mailto:tanjim437@gmail.com" label="tanjim437@gmail.com" external={false} />
             <MagneticLink href="tel:+8801610006484" label="+880 1610 006484" external={false} />
             <MagneticLink href="https://github.com/imtangim" label="GitHub" />
-            <MagneticLink href="https://imtangimhere.web.app" label="Web Profile" />
+            {/* <MagneticLink href="https://imtangimhere.web.app" label="Web Profile" /> */}
 
             <p className="mt-10 text-sm text-ink/50 max-w-sm leading-relaxed">
               Based in Bangladesh, open to remote opportunities across any timezone.

@@ -149,7 +149,7 @@ export default function Hero() {
             />
             <Image
               src="/assets/images/hero-side-profile.png"
-              alt="MD Tangim Haque, Flutter Developer"
+              alt="MD Tangim Haque, Software Engineer"
               width={1100}
               height={1274}
               priority
@@ -189,7 +189,7 @@ export default function Hero() {
           ref={subRef}
           className="md:col-start-1 md:row-start-3 mt-1 md:mt-6 max-w-md mx-auto md:mx-0 font-body text-base md:text-lg text-ink/65 leading-relaxed text-center md:text-left opacity-0"
         >
-          Flutter Developer crafting secure, high-performance applications
+          Software Engineer crafting secure, high-performance applications
           — from encrypted VPN tunnels to real-time, offline-first systems.
         </p>
 

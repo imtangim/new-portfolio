@@ -159,7 +159,7 @@ function StoreButtons({
         ) : (
           <div className={soonClass} aria-label="App Store coming soon">
             <AppStoreIcon />
-            <StoreLabel top="Coming" bottom="soon" interactive={false} />
+            <StoreLabel top="Download on the" bottom="Coming soon" interactive={false} />
           </div>
         )}
         {stores?.playStore ? (
@@ -177,7 +177,7 @@ function StoreButtons({
         ) : (
           <div className={soonClass} aria-label="Google Play coming soon">
             <PlayStoreIcon />
-            <StoreLabel top="Coming" bottom="soon" interactive={false} />
+            <StoreLabel top="Get it on" bottom="Coming soon" interactive={false} />
           </div>
         )}
       </div>

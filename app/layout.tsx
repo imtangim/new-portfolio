@@ -5,11 +5,11 @@ import CursorFollower from "@/components/CursorFollower";
 import GrainOverlay from "@/components/GrainOverlay";
 
 export const metadata: Metadata = {
-  title: "MD Tangim Haque — Flutter Developer & Mobile Software Engineer",
+  title: "MD Tangim Haque — Software Engineer & Mobile Software Engineer",
   description:
-    "Flutter developer with 3+ years building secure, production-grade mobile applications — VPN platforms, real-time systems, and offline-first apps. Based in Bangladesh, open to remote work.",
+    "Software Engineer with 3+ years building secure, production-grade mobile applications — VPN platforms, real-time systems, and offline-first apps. Based in Bangladesh, open to remote work.",
   keywords: [
-    "Flutter Developer",
+    "Software Engineer",
     "Mobile Software Engineer",
     "MD Tangim Haque",
     "Dart Developer",
@@ -19,9 +19,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "MD Tangim Haque" }],
   openGraph: {
-    title: "MD Tangim Haque — Flutter Developer & Mobile Software Engineer",
+    title: "MD Tangim Haque — Software Engineer & Mobile Software Engineer",
     description:
-      "Building elegant mobile experiences that scale. Flutter developer crafting secure, high-performance applications.",
+      "Building elegant mobile experiences that scale. Software Engineer crafting secure, high-performance applications.",
     type: "website",
   },
   robots: { index: true, follow: true },
