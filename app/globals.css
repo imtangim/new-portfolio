@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+  Font strategy: self-hosted/system stacks by default so the build has zero
+  external network dependency. To use the original web fonts in production,
+  uncomment the @import below (or switch back to next/font/google in
+  app/layout.tsx) — the --font-* variables already point to the right names.
+*/
+/* @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"); */
+
+:root {
+  --paper: #fffefc;
+  --ink: #000000;
+  --signal: #d90429;
+
+  --font-display: "Space Grotesk", "Avenir Next", "Helvetica Neue", system-ui, sans-serif;
+  --font-body: "Inter", "Avenir Next", "Helvetica Neue", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Roboto Mono", monospace;
+
+  --ease-signature: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+body {
+  background-color: var(--paper);
+  cursor: none;
+}
+
+@media (max-width: 768px), (hover: none) {
+  body {
+    cursor: auto;
+  }
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--paper);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--ink);
+  opacity: 0.2;
+}
+
+/* Visible keyboard focus */
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 4px;
+}
+
+/* Utility: hairline divider */
+.hairline {
+  height: 1px;
+  background: var(--ink);
+  opacity: 0.1;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Grain texture overlay */
+.grain-layer {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("/assets/images/noise-texture.png");
+  background-size: 220px 220px;
+}
+
+/* Cursor follower */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--ink);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  transition: width 0.3s var(--ease-signature), height 0.3s var(--ease-signature),
+    border-color 0.3s var(--ease-signature), background-color 0.3s var(--ease-signature);
+}
+
+.cursor-ring.is-active {
+  width: 64px;
+  height: 64px;
+  border-color: var(--signal);
+  background: rgba(217, 4, 41, 0.06);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 768px), (hover: none) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+  }
+}
