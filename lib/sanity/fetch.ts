@@ -28,7 +28,14 @@ import { mapBodyBlocks } from "@/types/portfolio";
 import type { BlogPost, ContentBlock } from "@/types/blog";
 import { blogPosts } from "@/data/posts";
 
+import { projectId } from "@/sanity/env";
+
 export const REVALIDATE_SECONDS = 60;
+
+/** When true, Sanity is configured — prefer CMS data over hardcoded fallbacks. */
+function isSanityConfigured(): boolean {
+  return Boolean(projectId && projectId !== "your_project_id");
+}
 
 type RawSiteSettings = Partial<SiteSettings> & {
   heroPortrait?: { asset?: { _ref?: string } };
@@ -189,6 +196,9 @@ function mapPost(raw: RawPost): BlogPost {
 
 const fetchOptions = { next: { revalidate: REVALIDATE_SECONDS } };
 
+/** Blog data must reflect Sanity immediately (create / delete / publish). */
+const liveBlogFetch = { cache: "no-store" as const };
+
 export async function getPortfolioData(): Promise<PortfolioData> {
   try {
     const [settingsRaw, experiencesRaw, projectsRaw, achievementsRaw] =
@@ -214,6 +224,14 @@ export async function getPortfolioData(): Promise<PortfolioData> {
     const hasAchievements = achievementsRaw?.length > 0;
 
     if (!hasSettings && !hasExperiences && !hasProjects && !hasAchievements) {
+      if (isSanityConfigured()) {
+        return {
+          settings: mapSettings(settingsRaw),
+          experiences: experiencesRaw ?? [],
+          projects: projectsRaw?.map(mapProject) ?? [],
+          achievements: achievementsRaw ?? [],
+        };
+      }
       return defaultPortfolioData;
     }
 
@@ -235,17 +253,16 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 
 export async function getAllPosts(): Promise<BlogPost[]> {
   try {
-    const raw = await sanityClient.fetch<RawPost[]>(postsQuery, {}, {
-      ...fetchOptions,
-      next: { ...fetchOptions.next, tags: ["post"] },
-    });
+    const raw = await sanityClient.fetch<RawPost[]>(postsQuery, {}, liveBlogFetch);
     if (!raw?.length) {
+      if (isSanityConfigured()) return [];
       return blogPosts.map(({ slug, title, excerpt, date, readTime, tags, coverImage, gallery, content }) => ({
         slug, title, excerpt, date, readTime, tags, coverImage, gallery, content,
       }));
     }
     return raw.map(mapPost);
   } catch {
+    if (isSanityConfigured()) return [];
     return blogPosts.map(({ initialComments: _c, initialLikes: _l, initialDislikes: _d, ...post }) => post);
   }
 }
@@ -255,25 +272,26 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | undefined>
     const raw = await sanityClient.fetch<RawPost | null>(
       postBySlugQuery,
       { slug },
-      { ...fetchOptions, next: { ...fetchOptions.next, tags: [`post:${slug}`] } }
+      liveBlogFetch
     );
     if (raw) return mapPost(raw);
   } catch {
     /* fall through */
   }
   const fallback = blogPosts.find((p) => p.slug === slug);
-  if (!fallback) return undefined;
+  if (!fallback || isSanityConfigured()) return undefined;
   const { slug: s, title, excerpt, date, readTime, tags, coverImage, gallery, content } = fallback;
   return { slug: s, title, excerpt, date, readTime, tags, coverImage, gallery, content };
 }
 
 export async function getAllPostSlugs(): Promise<string[]> {
   try {
-    const slugs = await sanityClient.fetch<string[]>(postSlugsQuery, {}, fetchOptions);
+    const slugs = await sanityClient.fetch<string[]>(postSlugsQuery, {}, liveBlogFetch);
     if (slugs?.length) return slugs.filter(Boolean);
   } catch {
     /* fall through */
   }
+  if (isSanityConfigured()) return [];
   return blogPosts.map((p) => p.slug);
 }
 

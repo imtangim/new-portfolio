@@ -1,29 +1,39 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { revalidatePath, revalidateTag } from "next/cache";
+import { revalidatePath } from "next/cache";
+
+type WebhookBody = {
+  secret?: string;
+  _type?: string;
+  slug?: { current?: string };
+};
 
 export async function POST(request: NextRequest) {
-  let secret = request.headers.get("x-sanity-secret");
+  let secret: string | null = request.headers.get("x-sanity-secret");
+  let body: WebhookBody = {};
 
-  if (!secret) {
-    try {
-      const body = await request.json();
-      secret = body.secret;
-    } catch {
-      /* no body */
-    }
+  try {
+    body = await request.json();
+    if (!secret && body.secret) secret = body.secret;
+  } catch {
+    /* empty body ok if secret in header */
   }
 
   if (secret !== process.env.SANITY_REVALIDATE_SECRET) {
     return NextResponse.json({ message: "Invalid secret" }, { status: 401 });
   }
 
-  revalidateTag("post");
-  revalidateTag("project");
-  revalidateTag("experience");
-  revalidateTag("achievement");
-  revalidatePath("/");
-  revalidatePath("/blog");
-  revalidatePath("/blog/[slug]", "page");
+  const slug = body.slug?.current;
 
-  return NextResponse.json({ revalidated: true, now: Date.now() });
+  revalidatePath("/", "layout");
+  revalidatePath("/blog", "layout");
+
+  if (slug) {
+    revalidatePath(`/blog/${slug}`);
+  }
+
+  return NextResponse.json({
+    revalidated: true,
+    slug: slug ?? null,
+    now: Date.now(),
+  });
 }

@@ -5,15 +5,12 @@ import { notFound } from "next/navigation";
 import PostContent from "@/components/blog/PostContent";
 import ReactionBar from "@/components/blog/ReactionBar";
 import CommentSection from "@/components/blog/CommentSection";
-import { getAllPostSlugs, getPostBySlug } from "@/lib/blog";
+import { getPostBySlug } from "@/lib/blog";
+
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
-}
-
-export async function generateStaticParams() {
-  const slugs = await getAllPostSlugs();
-  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

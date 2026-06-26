@@ -1,11 +1,12 @@
 import { createClient } from "next-sanity";
-import { apiVersion, dataset, projectId, useCdn } from "@/sanity/env";
+import { apiVersion, dataset, projectId } from "@/sanity/env";
 
+/** Live API — no CDN delay when posts are deleted or published. */
 export const sanityClient = createClient({
   projectId,
   dataset,
   apiVersion,
-  useCdn,
+  useCdn: false,
   perspective: "published",
 });
 
