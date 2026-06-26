@@ -107,7 +107,7 @@ export default function CommentSection({
         onSubmit={handleSubmit}
         className="mb-8 p-4 md:p-5 border border-ink/[0.08] rounded-xl bg-paper"
       >
-        <div className="grid gap-3 md:grid-cols-[140px_1fr]">
+        <div className="flex flex-col gap-3">
           <div>
             <label
               htmlFor="comment-author"
@@ -137,12 +137,14 @@ export default function CommentSection({
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder="Share your thoughts..."
-              rows={2}
-              maxLength={1000}
-              className="w-full px-3 py-2 bg-transparent border border-ink/15 rounded-lg text-sm resize-none focus:outline-none focus:border-signal transition-colors duration-300"
+              rows={5}
+              maxLength={3000}
+              className="w-full px-3 py-2 bg-transparent border border-ink/15 rounded-lg text-sm resize-none focus:outline-none focus:border-signal transition-colors duration-300 min-h-[120px]"
             />
+      
           </div>
         </div>
+ 
         <div className="flex justify-end mt-3">
           <button
             type="submit"
