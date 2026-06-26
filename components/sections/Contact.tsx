@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { useInView } from "@/hooks/useInView";
 
+import type { SiteSettings } from "@/types/portfolio";
+
 function MagneticLink({
   href,
   label,
@@ -50,7 +52,7 @@ function MagneticLink({
   );
 }
 
-export default function Contact() {
+export default function Contact({ settings }: { settings: SiteSettings }) {
   const { ref: headerRef, inView: headerInView } = useInView(0.3);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState<"idle" | "sent">("idle");
@@ -81,9 +83,9 @@ export default function Contact() {
             transform: headerInView ? "translateY(0)" : "translateY(20px)",
           }}
         >
-          <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">06 — Contact</span>
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">{settings.contactLabel}</span>
           <h2 className="font-display text-[10vw] md:text-[4.2vw] lg:text-[64px] leading-[1.02] tracking-tight mt-4 max-w-3xl text-balance">
-            Have a product to build? Let&rsquo;s talk.
+            {settings.contactHeadline}
           </h2>
         </div>
 
@@ -137,14 +139,17 @@ export default function Contact() {
 
           {/* Direct links */}
           <div className="flex flex-col">
-            <MagneticLink href="mailto:tanjim437@gmail.com" label="tanjim437@gmail.com" external={false} />
-            <MagneticLink href="tel:+8801610006484" label="+880 1610 006484" external={false} />
-            <MagneticLink href="https://github.com/imtangim" label="GitHub" />
-            {/* <MagneticLink href="https://imtangimhere.web.app" label="Web Profile" /> */}
+            {settings.contactLinks.map((link) => (
+              <MagneticLink
+                key={link.href}
+                href={link.href}
+                label={link.label}
+                external={link.external}
+              />
+            ))}
 
             <p className="mt-10 text-sm text-ink/50 max-w-sm leading-relaxed">
-              Based in Bangladesh, open to remote opportunities across any timezone.
-              Usually replies within a day.
+              {settings.contactNote}
             </p>
           </div>
         </div>

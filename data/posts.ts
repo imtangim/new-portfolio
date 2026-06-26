@@ -1,6 +1,12 @@
-import type { BlogPost } from "@/types/blog";
+import type { BlogPost, Comment } from "@/types/blog";
 
-export const blogPosts: BlogPost[] = [
+type LegacyBlogPost = BlogPost & {
+  initialLikes?: number;
+  initialDislikes?: number;
+  initialComments?: Comment[];
+};
+
+export const blogPosts: LegacyBlogPost[] = [
   {
     slug: "building-offline-first-flutter-apps",
     title: "Building Offline-First Flutter Apps That Actually Work",

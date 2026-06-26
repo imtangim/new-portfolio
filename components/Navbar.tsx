@@ -14,7 +14,7 @@ const links = [
   { label: "Contact", href: "#contact" },
 ];
 
-export default function Navbar() {
+export default function Navbar({ ctaText = "Let's talk" }: { ctaText?: string }) {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
@@ -176,7 +176,7 @@ export default function Navbar() {
               data-cursor-hover
               className="hidden md:inline-flex items-center gap-2 text-[13px] font-medium border border-ink/15 px-5 py-2.5 rounded-full hover:border-signal hover:text-signal transition-all duration-300"
             >
-              Let&rsquo;s talk
+              {ctaText}
             </a>
           ) : (
             <Link
@@ -184,7 +184,7 @@ export default function Navbar() {
               data-cursor-hover
               className="hidden md:inline-flex items-center gap-2 text-[13px] font-medium border border-ink/15 px-5 py-2.5 rounded-full hover:border-signal hover:text-signal transition-all duration-300"
             >
-              Let&rsquo;s talk
+              {ctaText}
             </Link>
           )}
 

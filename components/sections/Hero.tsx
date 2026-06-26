@@ -3,8 +3,13 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Image from "next/image";
+import type { SiteSettings } from "@/types/portfolio";
 
-export default function Hero() {
+interface HeroProps {
+  settings: SiteSettings;
+}
+
+export default function Hero({ settings }: HeroProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const portraitRef = useRef<HTMLDivElement>(null);
   const glowRef = useRef<HTMLDivElement>(null);
@@ -124,7 +129,7 @@ export default function Hero() {
         >
           <span className="w-2 h-2 rounded-full bg-signal animate-pulse" />
           <span className="font-mono text-xs tracking-[0.2em] uppercase text-ink/60">
-            Open to remote · Bangladesh
+            {settings.heroEyebrow}
           </span>
         </div>
 
@@ -148,7 +153,7 @@ export default function Hero() {
               aria-hidden="true"
             />
             <Image
-              src="/assets/images/hero-side-profile.png"
+              src={settings.heroPortrait}
               alt="MD Tangim Haque, Software Engineer"
               width={1100}
               height={1274}
@@ -174,12 +179,13 @@ export default function Hero() {
         <h1 className="md:col-start-1 md:row-start-2 font-display font-medium tracking-tightest text-balance text-center md:text-left">
           <span className="block overflow-hidden pb-[0.15em] text-[11vw] sm:text-[10vw] md:text-[5.2vw] lg:text-[78px] leading-[1.15]">
             <span ref={titleLine1} className="block">
-              Building elegant
+              {settings.heroTitleLine1}
             </span>
           </span>
           <span className="block overflow-hidden pb-[0.2em] text-[11vw] sm:text-[10vw] md:text-[5.2vw] lg:text-[78px] leading-[1.15]">
             <span ref={titleLine2} className="block">
-              mobile <span className="text-signal italic">experiences</span>
+              {settings.heroTitleLine2}{" "}
+              <span className="text-signal italic">{settings.heroTitleHighlight}</span>
             </span>
           </span>
         </h1>
@@ -189,8 +195,7 @@ export default function Hero() {
           ref={subRef}
           className="md:col-start-1 md:row-start-3 mt-1 md:mt-6 max-w-md mx-auto md:mx-0 font-body text-base md:text-lg text-ink/65 leading-relaxed text-center md:text-left opacity-0"
         >
-          Software Engineer crafting secure, high-performance applications
-          — from encrypted VPN tunnels to real-time, offline-first systems.
+          {settings.heroSubtitle}
         </p>
 
         {/* CTAs */}
@@ -208,18 +213,18 @@ export default function Hero() {
             }}
             className="group inline-flex items-center gap-2 bg-ink text-paper px-6 py-3 md:px-7 md:py-3.5 rounded-full text-sm font-medium overflow-hidden relative"
           >
-            <span className="relative z-10">View Projects</span>
+            <span className="relative z-10">{settings.heroCtaPrimary}</span>
             <span className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">→</span>
             <span className="absolute inset-0 bg-signal scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-400 ease-out" />
           </a>
           <a
-            href="/assets/MD-Tangim-Haque-Resume.pdf"
+            href={settings.resumeUrl}
             data-cursor-hover
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 border border-ink/15 px-6 py-3 md:px-7 md:py-3.5 rounded-full text-sm font-medium hover:border-signal hover:text-signal transition-all duration-300"
           >
-            Download Resume
+            {settings.heroCtaSecondary}
           </a>
           <a
             href="#contact"
@@ -231,7 +236,7 @@ export default function Hero() {
             }}
             className="inline-flex items-center gap-2 px-2 py-3 md:py-3.5 text-sm font-medium text-ink/60 hover:text-ink transition-colors duration-300"
           >
-            Contact Me
+            {settings.heroCtaTertiary}
           </a>
         </div>
       </div>

@@ -3,29 +3,25 @@ import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
 import CursorFollower from "@/components/CursorFollower";
 import GrainOverlay from "@/components/GrainOverlay";
+import { getSiteSettings } from "@/lib/blog";
 
-export const metadata: Metadata = {
-  title: "MD Tangim Haque — Software Engineer & Mobile Software Engineer",
-  description:
-    "Software Engineer with 3+ years building secure, production-grade mobile applications — VPN platforms, real-time systems, and offline-first apps. Based in Bangladesh, open to remote work.",
-  keywords: [
-    "Software Engineer",
-    "Mobile Software Engineer",
-    "MD Tangim Haque",
-    "Dart Developer",
-    "Cross-platform Development",
-    "Firebase",
-    "WireGuard",
-  ],
-  authors: [{ name: "MD Tangim Haque" }],
-  openGraph: {
-    title: "MD Tangim Haque — Software Engineer & Mobile Software Engineer",
-    description:
-      "Building elegant mobile experiences that scale. Software Engineer crafting secure, high-performance applications.",
-    type: "website",
-  },
-  robots: { index: true, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+
+  return {
+    title: settings.siteTitle,
+    description: settings.siteDescription,
+    keywords: settings.keywords,
+    authors: [{ name: "MD Tangim Haque" }],
+    openGraph: {
+      title: settings.siteTitle,
+      description: settings.siteDescription,
+      type: "website",
+      images: settings.ogImageUrl ? [{ url: settings.ogImageUrl }] : undefined,
+    },
+    robots: { index: true, follow: true },
+  };
+}
 
 export const viewport: Viewport = {
   width: "device-width",

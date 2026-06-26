@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
 import BlogIndex from "@/components/blog/BlogIndex";
-import { getAllPosts, getAllTags } from "@/lib/blog";
+import { getAllPosts, getAllTags, getSiteSettings } from "@/lib/blog";
 
-export const metadata: Metadata = {
-  title: "Blog — MD Tangim Haque",
-  description:
-    "Thoughts on Flutter development, mobile architecture, and building production-grade apps.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  return {
+    title: settings.blogPageTitle,
+    description: settings.blogPageDescription,
+  };
+}
 
-export default function BlogPage() {
-  const posts = getAllPosts();
-  const tags = getAllTags();
+export default async function BlogPage() {
+  const [posts, tags] = await Promise.all([getAllPosts(), getAllTags()]);
+  const settings = await getSiteSettings();
 
   return (
     <div className="px-6 md:px-10 pb-20">
@@ -23,8 +25,7 @@ export default function BlogPage() {
             Blog
           </h1>
           <p className="text-ink/60 text-sm md:text-base max-w-xl leading-relaxed">
-            Notes on Flutter, mobile engineering, and the lessons learned shipping
-            real products.
+            {settings.blogPageDescription}
           </p>
         </header>
 

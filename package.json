@@ -6,29 +6,41 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "studio": "sanity dev",
+    "seed": "node scripts/seed-sanity.mjs"
   },
   "dependencies": {
-    "next": "15.5.19",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "@portabletext/react": "^3.2.1",
+    "@react-three/drei": "^9.117.3",
+    "@react-three/fiber": "^8.17.10",
+    "@sanity/client": "^6.29.1",
+    "@sanity/image-url": "^1.1.0",
+    "@studio-freight/lenis": "^1.0.42",
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.108.2",
     "framer-motion": "^11.15.0",
     "gsap": "^3.12.5",
-    "@studio-freight/lenis": "^1.0.42",
-    "three": "^0.171.0",
-    "@react-three/fiber": "^8.17.10",
-    "@react-three/drei": "^9.117.3"
+    "next": "15.5.19",
+    "next-sanity": "^9.12.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-is": "^19.2.7",
+    "styled-components": "^6.4.3",
+    "three": "^0.171.0"
   },
   "devDependencies": {
-    "typescript": "^5.7.2",
+    "@sanity/vision": "^3.95.0",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@types/three": "^0.171.0",
-    "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.17",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.17.0",
-    "eslint-config-next": "15.5.19"
+    "eslint-config-next": "15.5.19",
+    "postcss": "^8.4.49",
+    "sanity": "^3.95.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2"
   }
 }

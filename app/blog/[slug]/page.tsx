@@ -5,29 +5,34 @@ import { notFound } from "next/navigation";
 import PostContent from "@/components/blog/PostContent";
 import ReactionBar from "@/components/blog/ReactionBar";
 import CommentSection from "@/components/blog/CommentSection";
-import { getAllPosts, getPostBySlug } from "@/lib/blog";
+import { getAllPostSlugs, getPostBySlug } from "@/lib/blog";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  return getAllPosts().map((post) => ({ slug: post.slug }));
+  const slugs = await getAllPostSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) return { title: "Post not found" };
 
+  const title = post.seo?.metaTitle || `${post.title} — MD Tangim Haque`;
+  const description = post.seo?.metaDescription || post.excerpt;
+  const ogImage = post.seo?.ogImageUrl || post.coverImage;
+
   return {
-    title: `${post.title} — MD Tangim Haque`,
-    description: post.excerpt,
+    title,
+    description,
     openGraph: {
-      title: post.title,
-      description: post.excerpt,
+      title: post.seo?.metaTitle || post.title,
+      description,
       type: "article",
-      images: [{ url: post.coverImage }],
+      images: ogImage ? [{ url: ogImage }] : undefined,
     },
   };
 }
@@ -42,7 +47,7 @@ function formatDate(dateStr: string) {
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const post = getPostBySlug(slug);
+  const post = await getPostBySlug(slug);
   if (!post) notFound();
 
   return (
@@ -126,18 +131,11 @@ export default async function BlogPostPage({ params }: PageProps) {
         )}
 
         <div className="mt-10 pt-8 border-t border-ink/[0.06]">
-          <ReactionBar
-            postSlug={post.slug}
-            initialLikes={post.initialLikes}
-            initialDislikes={post.initialDislikes}
-          />
+          <ReactionBar postSlug={post.slug} />
         </div>
 
         <div className="mt-10 pt-8 border-t border-ink/[0.06]">
-          <CommentSection
-            postSlug={post.slug}
-            initialComments={post.initialComments}
-          />
+          <CommentSection postSlug={post.slug} />
         </div>
       </div>
     </article>

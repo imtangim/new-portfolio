@@ -11,6 +11,12 @@ export type ContentBlock =
   | { type: "image"; src: string; alt: string; caption?: string }
   | { type: "gallery"; images: { src: string; alt: string }[] };
 
+export interface BlogPostSeo {
+  metaTitle?: string;
+  metaDescription?: string;
+  ogImageUrl?: string;
+}
+
 export interface BlogPost {
   slug: string;
   title: string;
@@ -21,9 +27,7 @@ export interface BlogPost {
   coverImage: string;
   gallery?: string[];
   content: ContentBlock[];
-  initialLikes: number;
-  initialDislikes: number;
-  initialComments: Comment[];
+  seo?: BlogPostSeo;
 }
 
 export type ReactionVote = "like" | "dislike" | null;

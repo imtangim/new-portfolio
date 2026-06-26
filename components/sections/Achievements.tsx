@@ -4,33 +4,19 @@ import { useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useInView } from "@/hooks/useInView";
+import type { AchievementItem, SiteSettings } from "@/types/portfolio";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const achievements = [
-  {
-    rank: "Champion",
-    title: "NASA Space Apps Challenge",
-    meta: "Dhaka Division · 2025",
-    featured: true,
-  },
-  {
-    rank: "6th Place",
-    title: "DIU Take Off Contest",
-    meta: "2021",
-    featured: false,
-  },
-  {
-    rank: "27th Place",
-    title: "Unlock The Algorithm",
-    meta: "Programming Contest · 2022",
-    featured: false,
-  },
-];
-
-export default function Achievements() {
+export default function Achievements({
+  settings,
+  achievements,
+}: {
+  settings: SiteSettings;
+  achievements: AchievementItem[];
+}) {
   const { ref: headerRef, inView: headerInView } = useInView(0.3);
 
   useEffect(() => {
@@ -85,9 +71,9 @@ export default function Achievements() {
             transform: headerInView ? "translateY(0)" : "translateY(20px)",
           }}
         >
-          <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">05 — Recognition</span>
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">{settings.achievementsLabel}</span>
           <h2 className="font-display text-[9vw] md:text-[3.4vw] lg:text-[52px] leading-[1.05] tracking-tight mt-4 max-w-2xl text-balance text-paper">
-            Emerging from the build, into the spotlight.
+            {settings.achievementsHeadline}
           </h2>
         </div>
 

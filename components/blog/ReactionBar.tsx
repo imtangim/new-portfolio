@@ -2,96 +2,71 @@
 
 import { useEffect, useState } from "react";
 import type { ReactionVote } from "@/types/blog";
+import { getVoterId } from "@/lib/voter";
 
 interface ReactionBarProps {
   postSlug: string;
-  initialLikes: number;
-  initialDislikes: number;
 }
 
-interface StoredReactions {
-  likes: number;
-  dislikes: number;
-  userVote: ReactionVote;
-}
-
-function getStorageKey(slug: string) {
-  return `blog-reactions-${slug}`;
-}
-
-function loadReactions(
-  slug: string,
-  initialLikes: number,
-  initialDislikes: number
-): StoredReactions {
-  if (typeof window === "undefined") {
-    return { likes: initialLikes, dislikes: initialDislikes, userVote: null };
-  }
-  try {
-    const stored = localStorage.getItem(getStorageKey(slug));
-    if (stored) return JSON.parse(stored) as StoredReactions;
-  } catch {
-    /* ignore */
-  }
-  return { likes: initialLikes, dislikes: initialDislikes, userVote: null };
-}
-
-function saveReactions(slug: string, data: StoredReactions) {
-  try {
-    localStorage.setItem(getStorageKey(slug), JSON.stringify(data));
-  } catch {
-    /* ignore */
-  }
-}
-
-export default function ReactionBar({
-  postSlug,
-  initialLikes,
-  initialDislikes,
-}: ReactionBarProps) {
-  const [likes, setLikes] = useState(initialLikes);
-  const [dislikes, setDislikes] = useState(initialDislikes);
+export default function ReactionBar({ postSlug }: ReactionBarProps) {
+  const [likes, setLikes] = useState(0);
+  const [dislikes, setDislikes] = useState(0);
   const [userVote, setUserVote] = useState<ReactionVote>(null);
   const [hydrated, setHydrated] = useState(false);
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
-    const stored = loadReactions(postSlug, initialLikes, initialDislikes);
-    setLikes(stored.likes);
-    setDislikes(stored.dislikes);
-    setUserVote(stored.userVote);
-    setHydrated(true);
-  }, [postSlug, initialLikes, initialDislikes]);
+    let cancelled = false;
+    const voterId = getVoterId();
 
-  const handleVote = (vote: "like" | "dislike") => {
-    let newLikes = likes;
-    let newDislikes = dislikes;
-    let newVote: ReactionVote = vote;
-
-    if (userVote === vote) {
-      if (vote === "like") newLikes -= 1;
-      else newDislikes -= 1;
-      newVote = null;
-    } else if (userVote === null) {
-      if (vote === "like") newLikes += 1;
-      else newDislikes += 1;
-    } else {
-      if (vote === "like") {
-        newLikes += 1;
-        newDislikes -= 1;
-      } else {
-        newDislikes += 1;
-        newLikes -= 1;
+    async function load() {
+      try {
+        const res = await fetch(
+          `/api/reactions?slug=${encodeURIComponent(postSlug)}&voterId=${encodeURIComponent(voterId)}`
+        );
+        const data = await res.json();
+        if (!cancelled) {
+          setLikes(data.likes ?? 0);
+          setDislikes(data.dislikes ?? 0);
+          setUserVote(data.userVote ?? null);
+        }
+      } catch {
+        /* keep defaults */
+      } finally {
+        if (!cancelled) setHydrated(true);
       }
     }
 
-    setLikes(newLikes);
-    setDislikes(newDislikes);
-    setUserVote(newVote);
-    saveReactions(postSlug, {
-      likes: newLikes,
-      dislikes: newDislikes,
-      userVote: newVote,
-    });
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [postSlug]);
+
+  const submitVote = async (nextVote: "like" | "dislike") => {
+    if (pending) return;
+    setPending(true);
+
+    const voterId = getVoterId();
+    const voteToSend: ReactionVote = userVote === nextVote ? null : nextVote;
+
+    try {
+      const res = await fetch("/api/reactions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slug: postSlug, voterId, vote: voteToSend }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setLikes(data.likes);
+        setDislikes(data.dislikes);
+        setUserVote(data.userVote);
+      }
+    } catch {
+      /* ignore */
+    } finally {
+      setPending(false);
+    }
   };
 
   return (
@@ -106,7 +81,8 @@ export default function ReactionBar({
 
       <button
         type="button"
-        onClick={() => handleVote("like")}
+        onClick={() => submitVote("like")}
+        disabled={pending}
         data-cursor-hover
         aria-pressed={userVote === "like"}
         aria-label={`Like (${likes})`}
@@ -132,7 +108,8 @@ export default function ReactionBar({
 
       <button
         type="button"
-        onClick={() => handleVote("dislike")}
+        onClick={() => submitVote("dislike")}
+        disabled={pending}
         data-cursor-hover
         aria-pressed={userVote === "dislike"}
         aria-label={`Dislike (${dislikes})`}

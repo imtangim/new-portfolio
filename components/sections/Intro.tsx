@@ -5,14 +5,17 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 
+import type { SiteSettings } from "@/types/portfolio";
+
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const narration =
-  "I design and engineer mobile experiences that combine performance, security, and beautiful user experiences.";
+interface IntroProps {
+  settings: SiteSettings;
+}
 
-export default function Intro() {
+export default function Intro({ settings }: IntroProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
   const wordsContainerRef = useRef<HTMLParagraphElement>(null);
@@ -100,7 +103,7 @@ export default function Intro() {
             ref={wordsContainerRef}
             className="font-display text-[7vw] md:text-[2.6vw] lg:text-[42px] leading-[1.2] tracking-tight max-w-3xl text-balance"
           >
-            {narration.split(" ").map((word, i) => (
+            {settings.introNarration.split(" ").map((word, i) => (
               <span key={i} className="intro-word inline-block mr-[0.28em]">
                 {word}
               </span>
@@ -116,7 +119,7 @@ export default function Intro() {
             style={{ transformStyle: "preserve-3d" }}
           >
             <Image
-              src="/assets/images/hero-side-profile.png"
+              src={settings.introSidePortrait}
               alt=""
               width={300}
               height={348}
@@ -130,7 +133,7 @@ export default function Intro() {
             style={{ transformStyle: "preserve-3d" }}
           >
             <Image
-              src="/assets/images/about-portrait.png"
+              src={settings.introFrontPortrait}
               alt=""
               width={300}
               height={300}

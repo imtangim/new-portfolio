@@ -5,6 +5,8 @@ import { gsap } from "gsap";
 import Image from "next/image";
 import { useInView } from "@/hooks/useInView";
 
+import type { SiteSettings } from "@/types/portfolio";
+
 function BentoCard({
   children,
   className = "",
@@ -70,7 +72,7 @@ function BentoCard({
   );
 }
 
-export default function About() {
+export default function About({ settings }: { settings: SiteSettings }) {
   const { ref: headerRef, inView: headerInView } = useInView(0.3);
 
   return (
@@ -85,10 +87,10 @@ export default function About() {
           }}
         >
           <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">
-            01 — About
+            {settings.aboutLabel}
           </span>
           <h2 className="font-display text-[9vw] md:text-[3.4vw] lg:text-[52px] leading-[1.05] tracking-tight mt-4 max-w-2xl text-balance">
-            Engineering apps that feel as good as they perform.
+            {settings.aboutHeadline}
           </h2>
         </div>
 
@@ -99,7 +101,7 @@ export default function About() {
               <div className="flex items-start justify-between">
                 <span className="font-mono text-xs tracking-[0.15em] uppercase text-ink/40">Experience</span>
                 <Image
-                  src="/assets/images/about-portrait.png"
+                  src={settings.aboutPortrait}
                   alt="MD Tangim Haque portrait"
                   width={90}
                   height={90}
@@ -108,11 +110,10 @@ export default function About() {
               </div>
               <div>
                 <div className="font-display text-[20vw] md:text-[7vw] lg:text-[110px] leading-none tracking-tightest">
-                  3<span className="text-signal">+</span>
+                  {settings.aboutYears}<span className="text-signal">+</span>
                 </div>
                 <p className="text-ink/60 mt-2 text-sm md:text-base max-w-sm">
-                  Years building production mobile applications — from secure VPN tunnels to
-                  real-time, offline-first systems across Android, iOS, and beyond.
+                  {settings.aboutYearsText}
                 </p>
               </div>
             </div>
@@ -122,15 +123,11 @@ export default function About() {
           <BentoCard delay={0.1}>
             <span className="font-mono text-xs tracking-[0.15em] uppercase text-ink/40">Fun Facts</span>
             <ul className="mt-5 space-y-3 text-sm text-ink/70">
-              <li className="flex gap-2">
-                <span className="text-signal">—</span> Built a VPN app that runs on Android TV
-              </li>
-              <li className="flex gap-2">
-                <span className="text-signal">—</span> Ships offline-first by default
-              </li>
-              <li className="flex gap-2">
-                <span className="text-signal">—</span> NASA Space Apps Champion, 2025
-              </li>
+              {settings.aboutFunFacts.map((fact) => (
+                <li key={fact} className="flex gap-2">
+                  <span className="text-signal">—</span> {fact}
+                </li>
+              ))}
             </ul>
           </BentoCard>
 
@@ -138,7 +135,7 @@ export default function About() {
           <BentoCard delay={0.15}>
             <span className="font-mono text-xs tracking-[0.15em] uppercase text-ink/40">Core Stack</span>
             <div className="mt-5 flex flex-wrap gap-2">
-              {["Flutter", "Dart", "Firebase", "GetX"].map((s) => (
+              {settings.aboutCoreStack.map((s) => (
                 <span
                   key={s}
                   className="text-xs px-3 py-1.5 rounded-full border border-ink/10 text-ink/70"
@@ -153,7 +150,7 @@ export default function About() {
           <BentoCard delay={0.2}>
             <span className="font-mono text-xs tracking-[0.15em] uppercase text-ink/40">Specialty</span>
             <p className="font-display text-2xl md:text-3xl mt-5 leading-tight tracking-tight">
-              Secure networking &amp; <span className="text-signal">real-time</span> systems
+              {settings.aboutSpecialty}
             </p>
           </BentoCard>
 
@@ -161,18 +158,14 @@ export default function About() {
           <BentoCard className="md:col-span-2" delay={0.25}>
             <span className="font-mono text-xs tracking-[0.15em] uppercase text-ink/40">Achievements</span>
             <div className="mt-5 grid sm:grid-cols-3 gap-4">
-              <div>
-                <div className="text-signal font-display text-3xl">🏆</div>
-                <p className="text-sm text-ink/70 mt-2">NASA Space Apps Challenge — Champion, Dhaka 2025</p>
-              </div>
-              <div>
-                <div className="text-ink/30 font-display text-3xl">06</div>
-                <p className="text-sm text-ink/70 mt-2">DIU Take Off Contest — 2021</p>
-              </div>
-              <div>
-                <div className="text-ink/30 font-display text-3xl">27</div>
-                <p className="text-sm text-ink/70 mt-2">Unlock The Algorithm — 2022</p>
-              </div>
+              {settings.aboutBentoAchievements.map((item) => (
+                <div key={item.text}>
+                  <div className={`font-display text-3xl ${item.icon === "🏆" ? "text-signal" : "text-ink/30"}`}>
+                    {item.icon}
+                  </div>
+                  <p className="text-sm text-ink/70 mt-2">{item.text}</p>
+                </div>
+              ))}
             </div>
           </BentoCard>
         </div>

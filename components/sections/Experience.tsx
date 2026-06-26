@@ -9,40 +9,19 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-const timeline = [
-  {
-    role: "Software Engineer",
-    company: "Nagorik Technologies LTD",
-    period: "2025 — Present",
-    points: [
-      "Develop scalable Flutter applications for Android and iOS",
-      "Integrate REST APIs and Firebase (Auth, Firestore)",
-      "Implement real-time chat and push notifications",
-    ],
-  },
-  {
-    role: "Junior Software Engineer",
-    company: "Sumash Tech Limited",
-    period: "2023 — 2025",
-    points: [
-      "Built cross-platform apps using Flutter and Dart",
-      "Developed secure Firebase authentication systems",
-      "Implemented WireGuard and OpenVPN networking",
-    ],
-  },
-  {
-    role: "Part-Time App Developer",
-    company: "Great Technical Solution",
-    period: "2024 — Present",
-    points: [
-      "Developed invoice and expense management apps",
-      "Implemented offline-first data sync",
-      "Published to Google Play and the App Store",
-    ],
-  },
-];
+import type { ExperienceItem, SiteSettings } from "@/types/portfolio";
 
-export default function Experience() {
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
+
+export default function Experience({
+  settings,
+  experiences,
+}: {
+  settings: SiteSettings;
+  experiences: ExperienceItem[];
+}) {
   const { ref: headerRef, inView: headerInView } = useInView(0.3);
   const trackRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
@@ -95,9 +74,9 @@ export default function Experience() {
             transform: headerInView ? "translateY(0)" : "translateY(20px)",
           }}
         >
-          <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">03 — Experience</span>
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">{settings.experienceLabel}</span>
           <h2 className="font-display text-[9vw] md:text-[3.4vw] lg:text-[52px] leading-[1.05] tracking-tight mt-4 max-w-2xl text-balance">
-            Three years, three roles, one craft.
+            {settings.experienceHeadline}
           </h2>
         </div>
 
@@ -110,8 +89,8 @@ export default function Experience() {
           />
 
           <div className="grid md:grid-cols-3 gap-8 md:gap-6 md:pt-12">
-            {timeline.map((item, i) => (
-              <div key={item.role} className="timeline-card relative">
+            {experiences.map((item) => (
+              <div key={`${item.role}-${item.company}`} className="timeline-card relative">
                 <div className="absolute -top-[42px] left-0 w-3 h-3 rounded-full bg-signal hidden md:block" />
                 <span className="font-mono text-xs text-signal tracking-wide">{item.period}</span>
                 <h3 className="font-display text-xl md:text-2xl mt-3 tracking-tight">{item.role}</h3>

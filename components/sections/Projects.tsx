@@ -6,80 +6,13 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useInView } from "@/hooks/useInView";
 
+import type { ProjectItem, SiteSettings } from "@/types/portfolio";
+
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-type Project = {
-  name: string;
-  tag: string;
-  description: string;
-  stack: string[];
-  screenshot: string;
-  stores?: {
-    appStore?: string;
-    playStore?: string;
-  };
-};
-
-const projects: Project[] = [
-  {
-    name: "Enova VPN",
-    tag: "Cross-platform VPN",
-    description:
-      "Encrypted tunneling across Android, iOS, macOS, and Android TV — built on WireGuard and OpenVPN protocols for secure, fast connections.",
-    stack: ["Flutter", "WireGuard", "OpenVPN"],
-    screenshot: "/assets/images/projects/enova-vpn.jpg",
-    stores: {
-      appStore: "https://apps.apple.com/us/app/vpn-proxy-master-enova-vpn/id6670394041",
-      playStore: "https://play.google.com/store/apps/details?id=com.enovavpn.mobile",
-    },
-  },
-  {
-    name: "Deen",
-    tag: "Islamic Companion App",
-    description:
-      "Quran, Hadith, prayer times, and Ramadan scheduling — with live widgets and notification support woven into daily life.",
-    stack: ["Flutter", "Firebase", "Widgets"],
-    screenshot: "/assets/images/projects/deen.jpg",
-    stores: {
-      appStore: "https://apps.apple.com/us/app/deen-islamic-app/id1617532276",
-      playStore: "https://play.google.com/store/apps/details?id=com.letsflutter.deen",
-    },
-  },
-  {
-    name: "OptiluxBD",
-    tag: "E-commerce Platform",
-    description:
-      "Product browsing and order management backed by secure REST API integration for a smooth retail experience.",
-    stack: ["Flutter", "REST APIs"],
-    screenshot: "/assets/images/projects/optiluxbd.jpg",
-  },
-  {
-    name: "gExpense",
-    tag: "Expense Manager",
-    description:
-      "Offline-first budgeting and spend analytics that work reliably with or without a connection.",
-    stack: ["Flutter", "Offline-first"],
-    screenshot: "/assets/images/projects/gexpense.jpg",
-  },
-  {
-    name: "PulseFit",
-    tag: "Health & Fitness",
-    description:
-      "Workout tracking, heart-rate zones, and progress dashboards — designed for daily motivation and long-term habits.",
-    stack: ["Flutter", "HealthKit", "Charts"],
-    screenshot: "/assets/images/projects/pulsefit.jpg",
-  },
-  {
-    name: "Zenith Finance",
-    tag: "Personal Finance",
-    description:
-      "Portfolio overview, bill reminders, and spending insights in a calm, data-rich interface built for clarity.",
-    stack: ["Flutter", "Firebase", "Plaid"],
-    screenshot: "/assets/images/projects/zenith.jpg",
-  },
-];
+type Project = ProjectItem;
 
 function AppStoreIcon() {
   return (
@@ -186,11 +119,13 @@ function StoreButtons({
 }
 
 function PhoneMockup({
+  projects,
   screensRef,
   nameRef,
   counterRef,
   activeStores,
 }: {
+  projects: Project[];
   screensRef: React.MutableRefObject<(HTMLDivElement | null)[]>;
   nameRef: React.Ref<HTMLDivElement>;
   counterRef: React.Ref<HTMLSpanElement>;
@@ -271,7 +206,13 @@ function PhoneMockup({
   );
 }
 
-export default function Projects() {
+export default function Projects({
+  settings,
+  projects,
+}: {
+  settings: SiteSettings;
+  projects: Project[];
+}) {
   const { ref: headerRef, inView: headerInView } = useInView(0.3);
   const [, setRenderTick] = useState(0);
   const sectionRef = useRef<HTMLElement>(null);
@@ -423,7 +364,7 @@ export default function Projects() {
     }, sectionRef);
 
     return () => ctx.revert();
-  }, []);
+  }, [projects]);
 
   const activeStores = projects[activeIndexRef.current]?.stores;
 
@@ -439,10 +380,10 @@ export default function Projects() {
           }}
         >
           <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">
-            04 — Selected Work
+            {settings.projectsLabel}
           </span>
           <h2 className="font-display text-[9vw] md:text-[3.4vw] lg:text-[52px] leading-[1.05] tracking-tight mt-4 max-w-2xl text-balance">
-            Multiple products, shipped and running.
+            {settings.projectsHeadline}
           </h2>
         </div>
 
@@ -458,6 +399,7 @@ export default function Projects() {
           <div className="sticky top-[10vh] md:top-[18vh] z-20 md:z-0 flex justify-center md:justify-end md:pr-8 self-start -mx-6 px-6 md:mx-0 md:px-0">
             <div className="relative w-full flex justify-center bg-paper pt-1 pb-5 md:pb-0 md:pt-0 border-b border-ink/[0.06] md:border-b-0 shadow-[0_16px_32px_12px_var(--paper)] md:shadow-none">
               <PhoneMockup
+                projects={projects}
                 screensRef={screensRef}
                 nameRef={nameRef}
                 counterRef={counterRef}

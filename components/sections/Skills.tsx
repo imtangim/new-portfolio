@@ -4,32 +4,27 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { useInView } from "@/hooks/useInView";
 
-const orbitSkills = [
-  "Flutter", "Dart", "Firebase", "GetX", "REST APIs",
-  "Swift", "Python", "Java", "WireGuard", "OpenVPN",
-];
+import type { Proficiency, SiteSettings } from "@/types/portfolio";
 
-const orbitPositions = orbitSkills.map((skill, i) => {
-  const angle = (i / orbitSkills.length) * 2 * Math.PI;
-  const radius = 47;
-  const x = 50 + radius * Math.cos(angle);
-  const y = 50 + radius * Math.sin(angle);
-  return {
-    skill,
-    left: `${x.toFixed(4)}%`,
-    top: `${y.toFixed(4)}%`,
-  };
-});
+interface SkillsProps {
+  settings: SiteSettings;
+}
 
-const proficiencies = [
-  { name: "Flutter & Dart", level: 95 },
-  { name: "Firebase & Backend Integration", level: 88 },
-  { name: "Clean Architecture", level: 85 },
-  { name: "Networking (WireGuard / OpenVPN)", level: 80 },
-  { name: "Real-time & Offline-first Systems", level: 90 },
-];
+export default function Skills({ settings }: SkillsProps) {
+  const orbitSkills = settings.orbitSkills;
+  const proficiencies = settings.proficiencies;
+  const orbitPositions = orbitSkills.map((skill, i) => {
+    const angle = (i / orbitSkills.length) * 2 * Math.PI;
+    const radius = 47;
+    const x = 50 + radius * Math.cos(angle);
+    const y = 50 + radius * Math.sin(angle);
+    return {
+      skill,
+      left: `${x.toFixed(4)}%`,
+      top: `${y.toFixed(4)}%`,
+    };
+  });
 
-export default function Skills() {
   const { ref: headerRef, inView: headerInView } = useInView(0.3);
   const orbitRef = useRef<HTMLDivElement>(null);
   const { ref: barsInViewRef, inView: barsInView } = useInView(0.2);
@@ -89,9 +84,9 @@ export default function Skills() {
             transform: headerInView ? "translateY(0)" : "translateY(20px)",
           }}
         >
-          <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">02 — Skills</span>
+          <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">{settings.skillsLabel}</span>
           <h2 className="font-display text-[9vw] md:text-[3.4vw] lg:text-[52px] leading-[1.05] tracking-tight mt-4 max-w-2xl text-balance">
-            A toolkit built for production, not demos.
+            {settings.skillsHeadline}
           </h2>
         </div>
 
@@ -123,9 +118,9 @@ export default function Skills() {
               </div>
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="font-display text-4xl md:text-5xl tracking-tightest">10+</div>
+                  <div className="font-display text-4xl md:text-5xl tracking-tightest">{settings.skillsCenterNumber}</div>
                   <div className="text-xs text-ink/50 mt-1 font-mono uppercase tracking-wide">
-                    Technologies
+                    {settings.skillsCenterLabel}
                   </div>
                 </div>
               </div>

@@ -5,30 +5,6 @@ import type { Comment } from "@/types/blog";
 
 interface CommentSectionProps {
   postSlug: string;
-  initialComments: Comment[];
-}
-
-function getStorageKey(slug: string) {
-  return `blog-comments-${slug}`;
-}
-
-function loadComments(slug: string, initial: Comment[]): Comment[] {
-  if (typeof window === "undefined") return initial;
-  try {
-    const stored = localStorage.getItem(getStorageKey(slug));
-    if (stored) return JSON.parse(stored) as Comment[];
-  } catch {
-    /* ignore */
-  }
-  return initial;
-}
-
-function saveComments(slug: string, comments: Comment[]) {
-  try {
-    localStorage.setItem(getStorageKey(slug), JSON.stringify(comments));
-  } catch {
-    /* ignore */
-  }
 }
 
 function formatDate(iso: string) {
@@ -51,41 +27,69 @@ function formatDate(iso: string) {
   });
 }
 
-export default function CommentSection({
-  postSlug,
-  initialComments,
-}: CommentSectionProps) {
-  const [comments, setComments] = useState<Comment[]>(initialComments);
+export default function CommentSection({ postSlug }: CommentSectionProps) {
+  const [comments, setComments] = useState<Comment[]>([]);
   const [author, setAuthor] = useState("");
   const [text, setText] = useState("");
   const [hydrated, setHydrated] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setComments(loadComments(postSlug, initialComments));
-    setHydrated(true);
-  }, [postSlug, initialComments]);
+    let cancelled = false;
 
-  const handleSubmit = (e: React.FormEvent) => {
+    async function load() {
+      try {
+        const res = await fetch(`/api/comments?slug=${encodeURIComponent(postSlug)}`);
+        const data = await res.json();
+        if (!cancelled && data.comments) {
+          setComments(data.comments);
+        }
+      } catch {
+        if (!cancelled) setError("Could not load comments.");
+      } finally {
+        if (!cancelled) setHydrated(true);
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [postSlug]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedAuthor = author.trim();
     const trimmedText = text.trim();
     if (!trimmedAuthor || !trimmedText) return;
 
     setSubmitting(true);
+    setError(null);
 
-    const newComment: Comment = {
-      id: `local-${Date.now()}`,
-      author: trimmedAuthor,
-      text: trimmedText,
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      const res = await fetch("/api/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slug: postSlug,
+          author: trimmedAuthor,
+          text: trimmedText,
+        }),
+      });
 
-    const updated = [newComment, ...comments];
-    setComments(updated);
-    saveComments(postSlug, updated);
-    setText("");
-    setSubmitting(false);
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to post comment");
+      }
+
+      setComments((prev) => [data.comment, ...prev]);
+      setText("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to post comment");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -141,10 +145,13 @@ export default function CommentSection({
               maxLength={3000}
               className="w-full px-3 py-2 bg-transparent border border-ink/15 rounded-lg text-sm resize-none focus:outline-none focus:border-signal transition-colors duration-300 min-h-[120px]"
             />
-      
           </div>
         </div>
- 
+
+        {error && (
+          <p className="mt-3 text-sm text-signal">{error}</p>
+        )}
+
         <div className="flex justify-end mt-3">
           <button
             type="submit"
@@ -152,7 +159,7 @@ export default function CommentSection({
             data-cursor-hover
             className="inline-flex items-center gap-2 text-xs font-medium border border-ink/15 px-4 py-2 rounded-full hover:border-signal hover:text-signal disabled:opacity-40 disabled:pointer-events-none transition-all duration-300"
           >
-            Post comment
+            {submitting ? "Posting…" : "Post comment"}
           </button>
         </div>
       </form>

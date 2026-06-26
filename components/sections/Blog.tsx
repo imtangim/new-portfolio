@@ -5,9 +5,8 @@ import Link from "next/link";
 import { gsap } from "gsap";
 import { useInView } from "@/hooks/useInView";
 import PostCard from "@/components/blog/PostCard";
-import { getAllPosts } from "@/lib/blog";
-
-const recentPosts = getAllPosts().slice(0, 3);
+import type { BlogPost } from "@/types/blog";
+import type { SiteSettings } from "@/types/portfolio";
 
 function AnimatedBlogCard({
   children,
@@ -74,8 +73,15 @@ function AnimatedBlogCard({
   );
 }
 
-export default function Blog() {
+export default function Blog({
+  settings,
+  posts,
+}: {
+  settings: SiteSettings;
+  posts: BlogPost[];
+}) {
   const { ref: headerRef, inView: headerInView } = useInView(0.3);
+  const recentPosts = posts.slice(0, 3);
 
   return (
     <section id="blog" className="relative py-28 md:py-36 px-6 md:px-10">
@@ -89,11 +95,11 @@ export default function Blog() {
           }}
         >
           <span className="font-mono text-xs tracking-[0.2em] uppercase text-signal">
-            07 — Writing
+            {settings.blogLabel}
           </span>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mt-4">
             <h2 className="font-display text-[9vw] md:text-[3.4vw] lg:text-[52px] leading-[1.05] tracking-tight max-w-2xl text-balance">
-              From the blog
+              {settings.blogHeadline}
             </h2>
             <Link
               href="/blog"
